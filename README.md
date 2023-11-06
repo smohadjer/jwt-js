@@ -1,5 +1,5 @@
-# Implementation of OAuth using JWT in Node.js
-On Vercel:
-https:
+# Implementation of JWT Authentication using Jose library on Vercel's Edge runtime:
+
+https: https://jwt-vercel-jade.vercel.app/
 
 

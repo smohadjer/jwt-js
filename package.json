@@ -4,9 +4,7 @@
   "description": "Implementation of OAuth using JWT in Node.js",
   "main": "server.js",
   "type": "module",
-  "scripts": {
-    "dev": "vercel dev"
-  },
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "ISC",
