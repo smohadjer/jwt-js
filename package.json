@@ -1,0 +1,17 @@
+{
+  "name": "jwt",
+  "version": "1.0.0",
+  "description": "Implementation of OAuth using JWT in Node.js",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jose": "^5.1.0",
+    "@vercel/edge": "^1.1.0"
+  }
+}

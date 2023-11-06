@@ -1,0 +1,28 @@
+import {jwtVerify} from 'jose';
+import { next } from '@vercel/edge';
+
+export default async function middleware(req) {
+  const authHeader = req.headers.get('authorization');
+  if (authHeader) {
+    const token = authHeader.split(' ')[1];
+    const secret = new TextEncoder().encode('mySecret');
+    try {
+      const payload = await jwtVerify(token, secret);
+      next();
+    } catch(err) {
+      return Response.json(
+        { success: false, message: 'no jwt token or invalid jwt token' },
+        { status: 401 }
+      )
+    }
+  } else {
+    return Response.json(
+      { success: false, message: 'authorization header not found' },
+      { status: 403 }
+    )
+  }
+}
+
+export const config = {
+  matcher: '/api/test'
+}

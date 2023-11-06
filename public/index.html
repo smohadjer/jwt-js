@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JWT in Node.js</title>
+  <style>
+    .loading {
+      width: 1em;
+      height: 1em;
+      border: 0.2em solid #999;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: loadingspin 1s linear infinite;
+      display: inline-block;
+    }
+
+    @keyframes loadingspin {
+      100% {
+          transform: rotate(360deg)
+      }
+    }
+  </style>
+</head>
+<body>
+    <h1>API Authentication Example</h1>
+    <h2>Implementation of OAuth via JWT in Node.js (<a href="https://github.com/smohadjer/jwt">GitHub</a>)</h2>
+    <p>Trying to access API without authenticating first will return a 401 "Unauthorized" error. After authenticating via the form you are granted an access token, which allows you to access API endpoint for 1 hour.</p>
+    <p><a id="api-link" href="/api/test">Access API</a></p>
+    <p id="api-status"></p>
+    <form style="background: #eee; padding: 1em;" id="form" method="POST" action="/api/authenticate">
+      <p>Use <strong>admin</strong> for username and <strong>test</strong> for password.</p>
+      <p><label>Username: <input required name="username" placeholder="admin"></label></p>
+      <p><label>Password: <input required name="password" placeholder="test"></label></p>
+      <button>Grant me access to API</button>
+      <div id="form-status"></div>
+    </form>
+    <p><button id="delete-token">Remove JWT Token</button></p>
+
+    <script type="module">
+      const formStatusElm = document.getElementById('form-status');
+      const apiStatusElm = document.getElementById('api-status');
+      let accessToken;
+
+      // click handler for api link
+      document.getElementById('api-link').addEventListener('click', async (e) => {
+        e.preventDefault();
+        console.log({accessToken});
+
+        fetch('/api/test', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' +  accessToken,
+            'Content-Type': 'application/json'
+          }
+        })
+        .then((response) => response.json())
+        .then(async (json) => {
+          if (json.error) {
+            formStatusElm.innerHTML = '<p>Sign in to fetch an access token.</p>'
+          }
+          apiStatusElm.innerHTML = JSON.stringify(json);
+        }).catch(function(err) {
+            console.error(` Err: ${err}`);
+        });
+      })
+
+      // click handler for delete token link
+      document.getElementById('delete-token').addEventListener('click', (e) => {
+        accessToken = undefined;
+        formStatusElm.innerHTML = '<p>Sign in to fetch an access token.</p>'
+      });
+
+      // submit handler for form
+      document.getElementById('form').addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        formStatusElm.innerHTML = '<p><span class="loading" style="margin-right: 0.5em; vertical-align: text-bottom"></span>Fetching access token...</p>';
+
+        const data = new FormData(e.target);
+
+        fetch(e.target.action, {
+          method: e.target.getAttribute('method'),
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(Object.fromEntries(data))
+        })
+        .then((response) => response.json())
+        .then(async (json) => {
+          accessToken = json.access_token;
+          formStatusElm.innerHTML = '<p>Access to API granted for 1 hour. You can delete access token using the button below.</p>';
+          e.target.reset();
+        }).catch(function(err) {
+            console.error(` Err: ${err}`);
+            accessToken = undefined;
+            formStatusElm.innerHTML = '<p>Wrong credentials. Try again.</p>';
+        });
+      });
+    </script>
+</body>
+</html>
