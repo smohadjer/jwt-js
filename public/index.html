@@ -49,7 +49,7 @@
         console.log({accessToken});
 
         fetch('/api/test', {
-          method: 'POST',
+          method: 'GET',
           headers: {
             'Authorization': 'Bearer ' +  accessToken,
             'Content-Type': 'application/json'
