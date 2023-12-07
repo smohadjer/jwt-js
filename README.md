@@ -1,8 +1,8 @@
 # JWT authentication via Bearer Authorization header
 
 ## Demo
-- https://jwt-js.onrender.com/
 - https://jwt-js-saeid-fastmailfm.vercel.app/ (serverless)
+- https://jwt-js.onrender.com/
 
 ## Localhost
 via npm:
