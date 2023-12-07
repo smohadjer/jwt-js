@@ -10,7 +10,7 @@ export default async (req, res) => {
   if (username === process.env.username && password === process.env.password) {
     const token = await new SignJWT({ 'username': username })
       .setProtectedHeader({ alg: 'HS256' })
-      .setExpirationTime('1h')
+      .setExpirationTime('1m')
       .sign(secret);
     res.json({token});
   } else {

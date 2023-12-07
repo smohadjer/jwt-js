@@ -25,14 +25,14 @@
 <body>
     <h1>JWT authentication for SPAs</h1>
     <p><a href="https://github.com/smohadjer/jwt-js">GitHub</a></p>
-    <p>In this example we implement jwt authentication via Bearer authorization header and without using a cookie. To sign and verify JWT token on server we use <a href="https://www.npmjs.com/package/jose">Jose</a> library rather than <a href="https://www.npmjs.com/package/jsonwebtoken">jsonwebtoken</a> library as Jose does not depend on Node.js API, hence allowing us to use it on Vercel's Edgeruntime.</p>
+    <p>In this example we implement jwt authentication via Bearer authorization header and without using a cookie. To sign and verify JWT token on server we use <a href="https://www.npmjs.com/package/jose">jose</a> library rather than <a href="https://www.npmjs.com/package/jsonwebtoken">jsonwebtoken</a> library as jose does not depend on Node.js, hence allowing us to use it on Vercel's Edge runtime.</p>
     <p><a id="api-link" href="/api/test">Access API</a> (if you are not authenticated you will get an error)</p>
     <div id="api-status"></div>
     <p>To remove token simply refresh the page.</p>
     <form style="background: #eee; padding: 0.5em 1em 1em;" method="POST" action="/api/authenticate">
       <p><label>Username: <input required name="username" value="admin"></label></p>
       <p><label>Password: <input required name="password" value="test"></label></p>
-      <button>Authenticate Me</button>
+      <button>Authenticate</button>
       <div id="form-status"></div>
     </form>
 
@@ -46,6 +46,13 @@
         e.preventDefault();
         console.log({accessToken});
 
+        if (accessToken) {
+          apiStatusElm.innerHTML = '<p><span class="loading" style="margin-right: 0.5em; vertical-align: text-bottom"></span> Calling API...</p>';
+        } else {
+          apiStatusElm.innerHTML = '<p style="color:red">No access token found!</p>';
+          return;
+        }
+
         fetch('/api/test', {
           method: 'GET',
           headers: {
@@ -56,10 +63,11 @@
         .then((response) => response.json())
         .then(async (json) => {
           if (json.error) {
-            formStatusElm.innerHTML = '<p>Sign in to fetch an access token.</p>'
+            formStatusElm.innerHTML = '<p>Authenticate to fetch a new access token</p>';
+            apiStatusElm.innerHTML = `<p style="color:red">${json.message}</p>`;
+          } else {
+            apiStatusElm.innerHTML = `<p>${JSON.stringify(json)}</p>`;
           }
-          apiStatusElm.innerHTML = json.api ? `<p>${JSON.stringify(json)}</p>`
-          : `<p style="color:red">${json.message}</p>`;
         }).catch(function(err) {
             console.error(` Err: ${err}`);
         });
@@ -84,7 +92,7 @@
         .then((response) => response.json())
         .then((json) => {
           accessToken = json.token;
-          formStatusElm.innerHTML = '<p style="color: green;">Access to API granted for 1 hour.</p>';
+          formStatusElm.innerHTML = '<p style="color: green;">Access to API granted for 1 min.</p>';
 
           // reset form
           e.target.reset();
