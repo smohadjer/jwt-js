@@ -1,4 +1,4 @@
-# JWT Authentication using Jose library and Fetch API (no cookie)
+# JWT authentication via Bearer Authorization header
 
 On Vercel Edge runtime:
 https://jwt-js-saeid-fastmailfm.vercel.app/
