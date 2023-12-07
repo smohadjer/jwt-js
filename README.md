@@ -1,18 +1,19 @@
 # JWT authentication via Bearer Authorization header
 
-On Vercel Edge runtime:
-https://jwt-js-saeid-fastmailfm.vercel.app/
+## Demo
+- https://jwt-js.onrender.com/
+- https://jwt-js-saeid-fastmailfm.vercel.app/ (serverless)
 
-On Render:
-https://jwt-js.onrender.com/
-
-Run on localhost via npm:
+## Localhost
+via npm:
 ````
+npm install
 npm run dev-express
 ````
 
-Or if you have Vercel CLI installed:
+via Vercel cli:
 ````
+npm install
 vercel dev
 ````
 
