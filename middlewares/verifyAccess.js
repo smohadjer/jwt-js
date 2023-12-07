@@ -15,7 +15,7 @@ export default async (req, res, next) => {
       console.log(payload);
       next();
     } catch(err) {
-      res.status(401).json({'error': 401, 'message': 'invalid token'})
+      res.status(401).json({'error': 401, 'message': 'No token or invalid token!'})
     }
   } else {
     res.status(403).json({'error': 403, 'message': 'authorization header not found'});

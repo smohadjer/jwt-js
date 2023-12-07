@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JWT in Node.js</title>
+  <title>JWT fro SPA</title>
   <style>
     .loading {
       width: 1em;
@@ -23,20 +23,18 @@
   </style>
 </head>
 <body>
-    <h1>API Authentication Serverless Example</h1>
-    <h2>Implementation of JWT Authentication using <a href="https://www.npmjs.com/package/jose">Jose</a> library on Vercel's Edge runtime:
-      (<a href="https://github.com/smohadjer/jwt-vercel">GitHub</a>)</h2>
-    <p>Trying to access API without authenticating first will return a 401 "Unauthorized" error. After authenticating via the form you are granted an access token, which allows you to access API endpoint for 1 hour.</p>
-    <p><a id="api-link" href="/api/test">Access API</a></p>
-    <p id="api-status"></p>
-    <form style="background: #eee; padding: 1em;" id="form" method="POST" action="/api/authenticate">
-      <p>Use <strong>admin</strong> for username and <strong>test</strong> for password.</p>
-      <p><label>Username: <input required name="username" placeholder="admin"></label></p>
-      <p><label>Password: <input required name="password" placeholder="test"></label></p>
-      <button>Grant me access to API</button>
+    <h1>JWT authentication for SPAs</h1>
+    <p><a href="https://github.com/smohadjer/jwt-js">GitHub</a></p>
+    <p>In this example we implement jwt authentication via Bearer authorization header and without using a cookie. To sign and verify JWT token on server we use <a href="https://www.npmjs.com/package/jose">Jose</a> library rather than <a href="https://www.npmjs.com/package/jsonwebtoken">jsonwebtoken</a> library as Jose does not depend on Node.js API, hence allowing us to use it on Vercel's Edgeruntime.</p>
+    <p><a id="api-link" href="/api/test">Access API</a> (if you are not authenticated you will get an error)</p>
+    <div id="api-status"></div>
+    <p>To remove token simply refresh the page.</p>
+    <form style="background: #eee; padding: 0.5em 1em 1em;" method="POST" action="/api/authenticate">
+      <p><label>Username: <input required name="username" value="admin"></label></p>
+      <p><label>Password: <input required name="password" value="test"></label></p>
+      <button>Authenticate Me</button>
       <div id="form-status"></div>
     </form>
-    <p><button id="delete-token">Remove JWT Token</button></p>
 
     <script type="module">
       const formStatusElm = document.getElementById('form-status');
@@ -60,20 +58,15 @@
           if (json.error) {
             formStatusElm.innerHTML = '<p>Sign in to fetch an access token.</p>'
           }
-          apiStatusElm.innerHTML = JSON.stringify(json);
+          apiStatusElm.innerHTML = json.api ? `<p>${JSON.stringify(json)}</p>`
+          : `<p style="color:red">${json.message}</p>`;
         }).catch(function(err) {
             console.error(` Err: ${err}`);
         });
       })
 
-      // click handler for delete token link
-      document.getElementById('delete-token').addEventListener('click', (e) => {
-        accessToken = undefined;
-        formStatusElm.innerHTML = '<p>Sign in to fetch an access token.</p>'
-      });
-
-      // submit handler for form
-      document.getElementById('form').addEventListener('submit', (e) => {
+      // submit handler for login form
+      document.querySelector('form').addEventListener('submit', (e) => {
         e.preventDefault();
 
         formStatusElm.innerHTML = '<p><span class="loading" style="margin-right: 0.5em; vertical-align: text-bottom"></span>Fetching access token...</p>';
@@ -89,14 +82,16 @@
           body: JSON.stringify(Object.fromEntries(data))
         })
         .then((response) => response.json())
-        .then(async (json) => {
-          accessToken = json.access_token;
-          formStatusElm.innerHTML = '<p>Access to API granted for 1 hour. You can delete access token using the button below.</p>';
+        .then((json) => {
+          accessToken = json.token;
+          formStatusElm.innerHTML = '<p style="color: green;">Access to API granted for 1 hour.</p>';
+
+          // reset form
           e.target.reset();
-        }).catch(function(err) {
-            console.error(` Err: ${err}`);
+        }).catch(function(error) {
+            console.error(` Error: ${error}`);
             accessToken = undefined;
-            formStatusElm.innerHTML = '<p>Wrong credentials. Try again.</p>';
+            formStatusElm.innerHTML = '<p>Wrong credentials. Use "admin" for username and "test" for password</p>';
         });
       });
     </script>
