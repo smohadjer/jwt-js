@@ -17,7 +17,7 @@ export default async function middleware(req) {
       console.log(payload);
       next();
     } catch(err) {
-      return Response.json({error: 401, message: 'Invalid token!'})
+      return Response.json({error: 401, message: JSON.stringify(err)})
     }
   } else {
     return Response.json({error: 403, message: 'authorization header not found'})

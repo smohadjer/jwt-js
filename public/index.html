@@ -53,8 +53,10 @@
           return;
         }
 
-        fetch('/api/test', {
+        //fetch('/api/test', {
+          fetch('https://api-jwt.vercel.app/api/quotes', {
           method: 'GET',
+          //mode: "cors",
           headers: {
             'Authorization': 'Bearer ' +  accessToken,
             'Content-Type': 'application/json'
@@ -91,7 +93,8 @@
         })
         .then((response) => response.json())
         .then((json) => {
-          accessToken = json.token;
+          console.log(json);
+          accessToken = json.accessToken;
           formStatusElm.innerHTML = '<p style="color: green;">Access to API granted for 1 min.</p>';
 
           // reset form
